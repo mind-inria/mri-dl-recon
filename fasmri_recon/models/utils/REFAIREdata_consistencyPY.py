@@ -1,5 +1,5 @@
 import torch
-from maskingPY import _mask_torch
+from masking import _mask_torch
 import torch.nn as nn
 
 class MultiplyScalar(nn.Module):
