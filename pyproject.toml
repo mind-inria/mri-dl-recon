@@ -7,7 +7,17 @@ authors = [
 description = "fastmri_recon in torch"
 
 readme = "README.md"
-dependencies = ["numpy", "scipy", "matplotlib", "tqdm", "torch" ]
+dependencies = [
+    "numpy >= 1.18", 
+    "h5py>=2.10.0",
+    "scikit-image >= 0.16",
+    "scipy", 
+    "matplotlib", 
+    "tqdm >= 4.36.1", 
+    "torch",
+    "pandas",
+    "huggingface-hub"
+    ]
 requires-python = ">=3.8"
 
 classifiers = [
