@@ -1,5 +1,5 @@
 [project]
-name = "mri_dl_recon"
+name = "mri-dl-recon"
 version = "0.0.1"
 authors = [
   { name="lena Oudjman", email="lenaoudjman@yahoo.fr" },
@@ -11,6 +11,8 @@ dependencies = [
     "numpy >= 1.18", 
     "h5py>=2.10.0",
     "scikit-image >= 0.16",
+    "requests",
+    "yaml",
     "scipy", 
     "matplotlib", 
     "tqdm >= 4.36.1", 
