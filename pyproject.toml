@@ -37,6 +37,11 @@ Homepage = "https://github.com/mind-inria/mri-dl-recon"
 build-backend = "setuptools.build_meta"
 requires = ["setuptools", "setuptools-scm[toml]", "wheel"]
 
+[tool.setuptools_scm]
+write_to = "src/functions_tf/_version.py"
+version_scheme = "python-simplified-semver"
+local_scheme="no-local-version"
+
 
 [project.optional-dependencies]
 # test = ["pytest", "pytest-cov", "pytest-xdist", "pytest-sugar", "pytest-cases", "pynfft2"]

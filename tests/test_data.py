@@ -4,38 +4,49 @@ Test for all functions reliated to the data.
 The tests compare functions in tensorflow and pytorch.
 """
 
-from utils import show_coils
-# from functions_torch.utils import show_coils
+import sys
+sys.path.append('/home/lo276838/Modèles/mri-dl-recon/src')
+
+
+from mri_dlrecon.functions_tf.utils_tf import virtual_coil_reconstruction as mtos_tf
+from mri_dlrecon.functions_torch.utils_torch import virtual_coil_reconstruction as mtos_torch
 
 import numpy as np
-import pytest
 import torch
-# import tensorflow as tf
-# from your_module import combine_images_tf, combine_images_pt 
+import pytest
+import h5py
+
+from fastmri.data import transforms as T
+import fastmri
 
 
-# @pytest.fixture
-# def sample_data():
-#     # Générer des données de test
-#     batch_size = 2
-#     Nch = 3
-#     Nx, Ny, Nz = 32, 32, 1
+@pytest.fixture
+def sample_data():
 
-#     # Créer des images multicoils
-#     imgs = np.random.randn(batch_size, Nch, Nx, Ny, Nz)
+    # Récuperation des données
+    file_path = "/volatile/FastMRI/brain_multicoil_train/multicoil_train/file_brain_AXT1POST_201_6002780.h5"
+    hf = h5py.File(file_path)
 
-#     return imgs
+    volume_kspace = hf['kspace'][()]
+    slice_kspace = volume_kspace[volume_kspace.shape[0]-1]
 
-# def test_combine_images(sample_data):
-#     # TensorFlow
-#     tf_output = combine_images_tf(sample_data)
+    slice_kspace2 = T.to_tensor(slice_kspace)      # Convert from numpy array to pytorch tensor
+    slice_image = fastmri.ifft2c(slice_kspace2)           # Apply Inverse Fourier Transform to get the complex image
+    slice_image_abs = fastmri.complex_abs(slice_image)   # Compute absolute value to get a real image
 
-#     # PyTorch
-#     pt_input = torch.from_numpy(sample_data)
-#     pt_output = combine_images_pt(pt_input.numpy())
+    return slice_image_abs
 
-#     # Assurez-vous que les formes sont correctes
-#     assert tf_output.shape == pt_output.shape
 
-#     # Assurez-vous que les valeurs sont proches (tolérance peut être ajustée)
-#     assert np.allclose(tf_output, pt_output, rtol=1e-4, atol=1e-6)
+def test_combine_images(sample_data):
+    # TensorFlow
+    tf_output = mtos_tf(sample_data)
+    tf_output = torch.tensor(tf_output.numpy())
+
+    # PyTorch
+    pt_output = mtos_torch(sample_data)
+
+    # Assurez-vous que les formes sont correctes
+    assert tf_output.shape == pt_output.shape
+
+    # Assurez-vous que les valeurs sont proches (tolérance peut être ajustée)
+    np.testing.assert_almost_equal(tf_output.numpy(), pt_output.numpy(), decimal=4)
