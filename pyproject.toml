@@ -19,7 +19,8 @@ dependencies = [
     "torch",
     "pandas",
     "huggingface-hub",
-    "fastmri"
+    "fastmri",
+    "debugpy"
     ]
 requires-python = ">=3.8"
 

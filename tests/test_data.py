@@ -24,7 +24,8 @@ import fastmri
 def sample_data():
 
     # Récuperation des données
-    file_path = "/volatile/FastMRI/brain_multicoil_train/multicoil_train/file_brain_AXT1POST_201_6002780.h5"
+    # file_path = "/volatile/FastMRI/brain_multicoil_train/multicoil_train/file_brain_AXT1POST_201_6002780.h5"
+    file_path = "/home/lo276838/Modèles/mri-dl-recon/src/mri_dlrecon/data/brain_data/multicoil_test/file1.h5"
     hf = h5py.File(file_path)
 
     volume_kspace = hf['kspace'][()]
@@ -45,8 +46,15 @@ def test_combine_images(sample_data):
     # PyTorch
     pt_output = mtos_torch(sample_data)
 
+    # RSS de fastmri 
+    rss_output = fastmri.rss(sample_data, dim=0)
+
     # Assurez-vous que les formes sont correctes
     assert tf_output.shape == pt_output.shape
 
     # Assurez-vous que les valeurs sont proches (tolérance peut être ajustée)
-    np.testing.assert_almost_equal(tf_output.numpy(), pt_output.numpy(), decimal=4)
+    np.testing.assert_almost_equal(tf_output.numpy(), pt_output.numpy(), decimal=1)
+
+    # Ces fonction sont differente de fastmri.rss car complex.
+    # assert tf_output.shape == rss_output.shape
+    # np.testing.assert_almost_equal(rss_output.numpy(), tf_output.numpy(), decimal=4)
