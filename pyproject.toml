@@ -1,5 +1,5 @@
 [project]
-name = "mri_dl_recon"
+name = "mri-dl-recon"
 version = "0.0.1"
 authors = [
   { name="lena Oudjman", email="lenaoudjman@yahoo.fr" },
@@ -11,12 +11,16 @@ dependencies = [
     "numpy >= 1.18", 
     "h5py>=2.10.0",
     "scikit-image >= 0.16",
+    "requests",
+    "yaml",
     "scipy", 
     "matplotlib", 
     "tqdm >= 4.36.1", 
     "torch",
     "pandas",
-    "huggingface-hub"
+    "huggingface-hub",
+    "fastmri",
+    "debugpy"
     ]
 requires-python = ">=3.8"
 
@@ -33,6 +37,11 @@ Homepage = "https://github.com/mind-inria/mri-dl-recon"
 [build-system]
 build-backend = "setuptools.build_meta"
 requires = ["setuptools", "setuptools-scm[toml]", "wheel"]
+
+[tool.setuptools_scm]
+write_to = "src/functions_tf/_version.py"
+version_scheme = "python-simplified-semver"
+local_scheme="no-local-version"
 
 
 [project.optional-dependencies]
