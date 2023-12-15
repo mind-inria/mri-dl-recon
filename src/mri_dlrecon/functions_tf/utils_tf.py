@@ -20,6 +20,49 @@ def show_coils(data, slice_nums, cmap=None):
         plt.imshow(data[num], cmap=cmap)
 
 
+
+def adjust_image_size(image, target_image_size, multicoil=False):
+    height = tf.shape(image)[-2]
+    width = tf.shape(image)[-1]
+    n_slices = tf.shape(image)[0]
+    transpose_axis = [1, 2, 0] if not multicoil else [2, 3, 0, 1]
+    transposed_image = tf.transpose(image, transpose_axis)
+    reshaped_image = tf.reshape(transposed_image, [height, width, -1])  # 3D tensors accepted
+    # with channels dimension last
+    target_height = target_image_size[0]
+    target_width = target_image_size[1]
+    padded_image = tf.image.resize_with_crop_or_pad(
+        reshaped_image,
+        target_height,
+        target_width,
+    )
+    if multicoil:
+        final_shape = [target_height, target_width, n_slices, -1]
+    else:
+        final_shape = [target_height, target_width, n_slices]
+    reshaped_padded_image = tf.reshape(padded_image, final_shape)
+    transpose_axis = [2, 0, 1] if not multicoil else [2, 3, 0, 1]
+    transpose_padded_image = tf.transpose(reshaped_padded_image, transpose_axis)
+    return transpose_padded_image
+
+
+
+# # Assuming you have an input image tensor 'input_image' and a target size.
+# input_image = tf.constant(np.random.rand(64, 128, 3))  # Example random 3D image
+# target_image_size = (256, 256)
+
+# # Using the function with multicoil=False
+# adjusted_image = adjust_image_size(input_image, target_image_size, multicoil=False)
+
+# # Print the shapes before and after adjustment
+# print("Original Image Shape:", tf.shape(input_image))
+# print("Adjusted Image Shape:", tf.shape(adjusted_image))
+
+
+
+
+
+
 def virtual_coil_reconstruction(imgs):
     """
     Calculate the combination of all coils using virtual coil reconstruction
@@ -48,6 +91,7 @@ def virtual_coil_reconstruction(imgs):
         )),
         tf.complex64
     )
+
     expand = [..., *((None, ) * (len(img_sh)-2))]
     reference = imgs / tf.cast(weights[:, None, ...], tf.complex64) / \
         tf.math.exp(1j * phase_reference)[expand]
@@ -67,10 +111,13 @@ def virtual_coil_reconstruction(imgs):
         difference_original_vs_virtual = tf.signal.ifft2d (
             tf.signal.fft2d(difference_original_vs_virtual) * hanning
         )
+    
     img_comb = tf.math.reduce_sum(
         imgs *
         tf.math.exp(
             1j * tf.cast(tf.math.angle(difference_original_vs_virtual), tf.complex64)),
-        axis=-3
+        axis=1
     )
     return img_comb
+
+

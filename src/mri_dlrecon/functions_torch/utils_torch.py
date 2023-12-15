@@ -24,9 +24,11 @@ def virtual_coil_reconstruction(imgs):
 
         Parameters:
         - imgs: Input images from different coils, represented as a complex tensor.
+        with : shape [batch_size, Nch, Nx, Ny, Nz]
 
         Returns:
         - img_comb: Reconstructed virtual coil image.
+        with shape [batch_size, Nx, Ny]
     """
      
     imgs = torch.tensor(imgs, dtype=torch.complex64)
