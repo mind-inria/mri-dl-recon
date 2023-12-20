@@ -47,21 +47,6 @@ def adjust_image_size(image, target_image_size, multicoil=False):
 
 
 
-# # Assuming you have an input image tensor 'input_image' and a target size.
-# input_image = tf.constant(np.random.rand(64, 128, 3))  # Example random 3D image
-# target_image_size = (256, 256)
-
-# # Using the function with multicoil=False
-# adjusted_image = adjust_image_size(input_image, target_image_size, multicoil=False)
-
-# # Print the shapes before and after adjustment
-# print("Original Image Shape:", tf.shape(input_image))
-# print("Adjusted Image Shape:", tf.shape(adjusted_image))
-
-
-
-
-
 
 def virtual_coil_reconstruction(imgs):
     """
@@ -108,9 +93,11 @@ def virtual_coil_reconstruction(imgs):
             tf.signal.fft3d(difference_original_vs_virtual) * tf.signal.fftshift(hanning)
         )
     else:
-        difference_original_vs_virtual = tf.signal.ifft2d (
-            tf.signal.fft2d(difference_original_vs_virtual) * hanning
-        )
+        fft_result = tf.signal.fft2d(difference_original_vs_virtual)
+        shape_want = fft_result.shape[-1]
+        hanning = tf.slice(hanning, begin=[0, 0], size=[-1, shape_want])
+
+        difference_original_vs_virtual = tf.signal.ifft2d( fft_result * hanning )
     
     img_comb = tf.math.reduce_sum(
         imgs *

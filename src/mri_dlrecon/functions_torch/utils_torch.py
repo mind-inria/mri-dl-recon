@@ -2,20 +2,13 @@ from matplotlib import pyplot as plt
 import torch
 
 def show_coils(data, slice_nums, cmap=None):
-    """
-    Display image slices from a 3D dataset.
 
-    Parameters:
-    - data: 3D array representing the dataset.
-    - slice_nums: List of integers specifying the indices of slices to be displayed.
-    - cmap: Colormap for image display (optional). 
-    
-    """
 
     fig = plt.figure()
     for i, num in enumerate(slice_nums):
         plt.subplot(1, len(slice_nums), i + 1)
         plt.imshow(data[num], cmap=cmap)
+
 
 
 def virtual_coil_reconstruction(imgs):
@@ -60,9 +53,11 @@ def virtual_coil_reconstruction(imgs):
             torch.fft.fftn(difference_original_vs_virtual) * torch.fft.fftshift(hanning)
         )
     else:
-        difference_original_vs_virtual = torch.fft.ifft2(
-            torch.fft.fft2(difference_original_vs_virtual) * hanning
-        )
+        fft_result = torch.fft.fft2(difference_original_vs_virtual)
+        shape_want = fft_result.shape[-1]
+        hanning = hanning[:, :shape_want]
+
+        difference_original_vs_virtual = torch.fft.ifft2( fft_result * hanning )
     
     img_comb = torch.sum(
         imgs *
