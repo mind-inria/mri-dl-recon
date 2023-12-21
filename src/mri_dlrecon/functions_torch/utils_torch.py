@@ -2,8 +2,6 @@ from matplotlib import pyplot as plt
 import torch
 
 def show_coils(data, slice_nums, cmap=None):
-
-
     fig = plt.figure()
     for i, num in enumerate(slice_nums):
         plt.subplot(1, len(slice_nums), i + 1)
