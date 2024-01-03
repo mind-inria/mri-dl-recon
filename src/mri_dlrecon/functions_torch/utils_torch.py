@@ -21,19 +21,15 @@ def virtual_coil_reconstruction(imgs):
         - img_comb: Reconstructed virtual coil image.
         with shape [batch_size, Nx, Ny]
     """
-     
-    imgs = torch.tensor(imgs, dtype=torch.complex64)
+
+    imgs = imgs.clone().detach()
     img_sh = imgs.shape 
     dimension = len(img_sh) - 2
     weights = torch.sum(torch.abs(imgs), dim=1) + 1e-16
 
-    phase_reference = torch.tensor(
-        torch.angle(torch.sum(
-            imgs,
-            dim=tuple(2 + torch.arange(len(img_sh) - 2))
-        )),
-        dtype=torch.complex64
-    )
+    phase_reference = torch.angle(torch.sum(imgs, 
+                                            dim=tuple(2+torch.arange(len(img_sh)-2))
+                                            )).clone().detach()
     expand = [Ellipsis, *((None, ) * (len(img_sh) - 2))]
 
     reference = imgs / weights[:, None, ...].to(torch.complex64) / \
@@ -45,6 +41,8 @@ def virtual_coil_reconstruction(imgs):
     for d in range(dimension - 1):
         hanning = hanning.unsqueeze(-1) * torch.hann_window(img_sh[dimension + d])
     hanning = hanning.to(torch.complex64)
+
+    
 
     if dimension == 3:
         difference_original_vs_virtual = torch.fft.ifftn(
