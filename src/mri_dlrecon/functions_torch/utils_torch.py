@@ -22,7 +22,7 @@ def virtual_coil_reconstruction(imgs):
         with shape [batch_size, Nx, Ny]
     """
 
-    imgs = imgs.clone().detach()
+    # imgs = imgs.clone().detach()
     img_sh = imgs.shape 
     dimension = len(img_sh) - 2
     weights = torch.sum(torch.abs(imgs), dim=1) + 1e-16
@@ -45,9 +45,11 @@ def virtual_coil_reconstruction(imgs):
     
 
     if dimension == 3:
-        difference_original_vs_virtual = torch.fft.ifftn(
-            torch.fft.fftn(difference_original_vs_virtual) * torch.fft.fftshift(hanning)
-        )
+        fft_result = torch.fft.fftn(difference_original_vs_virtual) 
+        hanning = torch.fft.fftshift(hanning) 
+
+        difference_original_vs_virtual = torch.fft.ifftn( fft_result * hanning )
+
     else:
         fft_result = torch.fft.fft2(difference_original_vs_virtual)
         shape_want = fft_result.shape[-1]
