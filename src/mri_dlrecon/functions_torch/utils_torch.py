@@ -75,7 +75,7 @@ def load_and_transform(path):
     kspace = torch.tensor(kspace , dtype=torch.complex64)
     return kspace
 
-def create_masked_Image(mask, kspace,):
+def create_zero_filled_reconstruction(mask, kspace,):
     masked_data , _ = mask(kspace.shape) 
     masked_kspace = kspace * masked_data
     masked_image = torch.fft.fftshift(torch.fft.ifft2(masked_kspace))
