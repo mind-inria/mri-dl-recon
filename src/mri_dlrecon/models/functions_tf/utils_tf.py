@@ -1,6 +1,7 @@
 import numpy as np
 import tensorflow as tf
 from matplotlib import pyplot as plt
+from tf_fastmri_data.preprocessing_utils.fourier.cartesian import ortho_ifft2d, ortho_fft2d
 
 
 def show_coils(data, slice_nums, cmap=None):
@@ -18,7 +19,6 @@ def show_coils(data, slice_nums, cmap=None):
     for i, num in enumerate(slice_nums):
         plt.subplot(1, len(slice_nums), i + 1)
         plt.imshow(data[num], cmap=cmap)
-
 
 
 def virtual_coil_reconstruction(imgs):
@@ -64,8 +64,8 @@ def virtual_coil_reconstruction(imgs):
             tf.signal.fft3d(difference_original_vs_virtual) * tf.signal.fftshift(hanning)
         )
     else:
-        difference_original_vs_virtual = tf.signal.ifft2d(
-            tf.signal.fft2d(difference_original_vs_virtual) * hanning
+        difference_original_vs_virtual = ortho_ifft2d(
+            ortho_fft2d(difference_original_vs_virtual) * hanning
         )
     img_comb = tf.math.reduce_sum(
         imgs *
@@ -76,4 +76,14 @@ def virtual_coil_reconstruction(imgs):
     return img_comb
 
 
+def generate_sample_data(batch_size=2, num_channels=4, img_size=(32, 32, 32)):
+    return np.random.randn(batch_size, num_channels, *img_size) + 1j * np.random.randn(batch_size, num_channels, *img_size)
 
+def test_virtual_coil_reconstruction():
+    sample_data = generate_sample_data()
+    result = virtual_coil_reconstruction(sample_data)
+
+    print("Input shape:", sample_data.shape)
+    print("Output shape:", result.shape)
+
+test_virtual_coil_reconstruction()
