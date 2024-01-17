@@ -81,7 +81,6 @@ def create_zero_filled_reconstruction(mask, kspace):
     masked_image = torch.fft.fftshift(torch.fft.ifft2(masked_kspace))
 
     masked_image = masked_image.unsqueeze(1)
-    masked_image = masked_image.abs()
     return masked_image, masked_data
 
 
