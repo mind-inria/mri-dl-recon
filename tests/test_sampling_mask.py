@@ -3,7 +3,7 @@ sys.path.append('/home/lo276838/Modèles/mri-dl-recon/src')
 
 import pytest
 import torch
-from mri_dlrecon.data.gen_mask_torch import gen_mask_torch
+from mri_dlrecon.models.utils.gen_mask import gen_mask_torch
 
 @pytest.mark.parametrize('fixed_masks', [True, False])
 @pytest.mark.parametrize('multicoil', [True, False])
