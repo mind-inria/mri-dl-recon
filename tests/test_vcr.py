@@ -25,8 +25,6 @@ def download_data() :
     return images_multicoil
 
 
-
-
 def test_combine_images(download_data):
 
     # PyTorch
