@@ -1,3 +1,4 @@
+
 # import 
 import torch
 import numpy as np
@@ -6,14 +7,12 @@ from torch.autograd import Variable
 
 from utils.vcr import virtual_coil_reconstruction
 from utils.data_transform import load_and_transform
-
 from fastmri.data.subsample import create_mask_for_mask_type
 from fastmri.models.unet import Unet
 
 
 # paths
 train_path = "/volatile/FastMRI/brain_multicoil_train/multicoil_train/file_brain_AXT1POST_201_6002780.h5"
-val_path = "/volatile/FastMRI/brain_multicoil_train/multicoil_train/file_brain_AXT1POST_201_6002780.h5"
 
 
 # # generator 

@@ -1,8 +1,7 @@
-import sys
-sys.path.append('/home/lo276838/Modèles/mri-dl-recon/src/mri_dlrecon')
 
 import torch
-from models.utils.data_transform import ortho_fft2d, ortho_ifft2d
+# from data_transform import ortho_fft2d, ortho_ifft2d
+from utils.data_transform import ortho_fft2d, ortho_ifft2d
 
 
 def virtual_coil_reconstruction(imgs):
